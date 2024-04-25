@@ -3,13 +3,13 @@
 Contains the TestAmenityDocs classes
 """
 
-from datetime import datetime
 import inspect
+import unittest
+import pep8
 import models
 from models import amenity
 from models.base_model import BaseModel
-import pep8
-import unittest
+
 Amenity = amenity.Amenity
 
 
@@ -52,9 +52,9 @@ class TestAmenityDocs(unittest.TestCase):
         """Test for the presence of docstrings in Amenity methods"""
         for func in self.amenity_f:
             self.assertIsNot(func[1].__doc__, None,
-                             "{:s} method needs a docstring".format(func[0]))
+                             f"{func[0]} method needs a docstring")
             self.assertTrue(len(func[1].__doc__) >= 1,
-                            "{:s} method needs a docstring".format(func[0]))
+                            f"{func[0]} method needs a docstring")
 
 
 class TestAmenity(unittest.TestCase):
@@ -79,12 +79,11 @@ class TestAmenity(unittest.TestCase):
     def test_to_dict_creates_dict(self):
         """test to_dict method creates a dictionary with proper attrs"""
         am = Amenity()
-        print(am.__dict__)
         new_d = am.to_dict()
         self.assertEqual(type(new_d), dict)
         self.assertFalse("_sa_instance_state" in new_d)
         for attr in am.__dict__:
-            if attr is not "_sa_instance_state":
+            if attr != "_sa_instance_state":
                 self.assertTrue(attr in new_d)
         self.assertTrue("__class__" in new_d)
 
@@ -102,5 +101,5 @@ class TestAmenity(unittest.TestCase):
     def test_str(self):
         """test that the str method has the correct output"""
         amenity = Amenity()
-        string = "[Amenity] ({}) {}".format(amenity.id, amenity.__dict__)
+        string = f"[Amenity] ({amenity.id}) {amenity.__dict__}"
         self.assertEqual(string, str(amenity))
