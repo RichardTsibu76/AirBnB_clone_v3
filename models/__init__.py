@@ -3,8 +3,15 @@
 initialize the models package
 """
 
+import sys
 from os import getenv
 
+# set the default name for the file storage, the name changes with the
+# environment.
+if any('unittest' in arg for arg in sys.argv):
+    FILE_PATH = 'dummy_test_file.json'
+else:
+    FILE_PATH = "file.json"
 
 storage_t = getenv("HBNB_TYPE_STORAGE")
 
