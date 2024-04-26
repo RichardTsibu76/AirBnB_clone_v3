@@ -63,12 +63,52 @@ class DBStorage:
             self.__session.delete(obj)
 
     def reload(self):
-        """reloads data from the database"""
+        """Creates all tables in the database and the current
+        database session."""
         Base.metadata.create_all(self.__engine)
-        sess_factory = sessionmaker(bind=self.__engine, expire_on_commit=False)
-        Session = scoped_session(sess_factory)
-        self.__session = Session
+
+        session_factory = sessionmaker(
+            bind=self.__engine, expire_on_commit=False
+        )
+
+        self.__session = scoped_session(session_factory)
 
     def close(self):
         """call remove() method on the private session attribute"""
         self.__session.remove()
+
+    def count(self, cls=None) -> int:
+        """
+        Returns the number of objects in the storage.
+
+        Args:
+            cls (optional): The class name of the objects to count.
+            If not provided, counts all objects.
+
+        Returns:
+            int: The number of objects in the storage.
+        """
+        return len(self.all(cls))
+
+    def get(self, cls=None, cls_id=None) -> object:
+        """
+        Returns the instance object that has the specified class name and id.
+
+        Args:
+            cls (optional): The class name of the object to retrieve.
+            cls_id(optional): The ID of the object
+
+        Returns:
+            int: The number of objects in the storage.
+        """
+        if cls and cls_id:
+            return self.__session.query(cls).filter(cls.id == cls_id).first()
+        return None
+
+    def drop_all_tables(self):
+        """Drops all tables, useful when testing."""
+        self.__engine.execute('SET FOREIGN_KEY_CHECKS = 0')
+        self.__session.rollback()
+        Base.metadata.drop_all(self.__engine)
+        self.__engine.execute('SET FOREIGN_KEY_CHECKS = 1')
+        self.reload()
