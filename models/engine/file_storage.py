@@ -87,17 +87,17 @@ class FileStorage:
 
     def get(self, cls=None, cls_id=None) -> object:
         """
-        Returns the instance object that has the specified class name and id.
+        Retrieve an object from the storage based on the class and ID.
 
         Args:
-            cls (optional): The class name of the object to retrieve.
-            cls_id(optional): The ID of the object
+            cls (type): The class of the object to retrieve.
+            cls_id (str): The ID of the object to retrieve.
 
         Returns:
-            int: The number of objects in the storage.
+            object: The retrieved object, or None if not found.
         """
         if None in [cls, cls_id]:
             return None
 
-        key = f"{cls.__name__}.{cls_id}"
+        key = "{}.{}".format(cls.__name__, cls_id)
         return self.__objects.get(key)
