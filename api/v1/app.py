@@ -9,6 +9,7 @@ from api.v1.views import app_views
 
 
 app = Flask(__name__)
+app.url_map.strict_slashes = False
 app.register_blueprint(app_views)
 
 
@@ -19,5 +20,8 @@ def close(_):
 
 
 if __name__ == "__main__":
-    app.run(host=f"{os.getenv('HBNB_API_HOST') or '0.0.0.0'}",
-            port=f"{os.getenv('HBNB_API_PORT') or 5000}", threaded=True)
+    app.run(
+        host=f"{os.getenv('HBNB_API_HOST', default='0.0.0.0')}",
+        port=f"{os.getenv('HBNB_API_PORT', default='5000')}",
+        threaded=True
+    )
