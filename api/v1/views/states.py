@@ -1,5 +1,7 @@
 #!/usr/bin/python3
 
+"""This module handles routes for State objects."""
+
 from flask import Response, jsonify, request, abort
 from models.state import State
 from models import storage
