@@ -72,11 +72,12 @@ class TestDBStorageDocs(unittest.TestCase):
         """Test for the presence of docstrings in DBStorage methods"""
         for func in self.dbs_f:
             self.assertIsNot(
-                func[1].__doc__, None, f"{func[0]} method needs a docstring"
+                func[1].__doc__, None,
+                "{} method needs a docstring".format(func[0])
             )
             self.assertTrue(
                 len(func[1].__doc__) >= 1,
-                f"{func[0]} method needs a docstring"
+                "{} method needs a docstring".format(func[0])
             )
 
 
@@ -115,9 +116,9 @@ class TestDBStorage(unittest.TestCase):
     def test_count_all_objects(self):
         """Test that the `count` method returns the right number of objects."""
         for i in range(1, 11):
-            state = State(name=f"State_{i}")
+            state = State(name="State_{}".format(i))
             state.save()
-            City(name=f"City_{i}", state_id=state.id).save()
+            City(name="City_{}".format(i), state_id=state.id).save()
 
         self.assertEqual(models.storage.count(), 20)
 
