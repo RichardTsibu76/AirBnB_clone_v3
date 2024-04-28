@@ -91,7 +91,7 @@ class DBStorage:
         """
         return len(self.all(cls))
 
-    def get(self, cls=None, cls_id=None) -> object:
+    def get(self, cls=None, cls_id=None):
         """
         Returns the instance object that has the specified class name and id.
 

@@ -2,14 +2,14 @@
 
 """This module handles routes for State objects."""
 
-from flask import Response, jsonify, request, abort
+from flask import jsonify, request, abort
 from models.state import State
 from models import storage
 from api.v1.views import app_views
 
 
 @app_views.route('/states', methods=['GET', 'POST'])
-def handle_states() -> Response:
+def handle_states():
     """
     Handles GET and POST requests for states.
 
@@ -38,7 +38,7 @@ def handle_states() -> Response:
 
 
 @app_views.route('/states/<state_id>', methods=['GET', 'DELETE', 'PUT'])
-def handle_state(state_id: "str | None" = None) -> Response:
+def handle_state(state_id=None):
     """
     Handles GET, DELETE, and PUT requests for a specific state.
 
