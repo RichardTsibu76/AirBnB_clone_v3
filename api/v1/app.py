@@ -25,6 +25,21 @@ def page_not_found(_):
     return jsonify({"error": "Not found"}), 404
 
 
+@app.errorhandler(400)
+def bad_request(error):
+    """
+    Handles the 400 Bad Request error.
+
+    Args:
+        error (Exception): The error object representing the 400 Bad Request.
+
+    Returns:
+        tuple: A tuple containing the error message and the HTTP status code
+        400.
+    """
+    return str(error), 400
+
+
 if __name__ == "__main__":
     app.run(
         host=os.getenv('HBNB_API_HOST', default='0.0.0.0'),
