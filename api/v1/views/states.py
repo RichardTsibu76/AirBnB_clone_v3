@@ -38,7 +38,7 @@ def handle_states() -> Response:
 
 
 @app_views.route('/states/<state_id>', methods=['GET', 'DELETE', 'PUT'])
-def handle_state(state_id: str | None = None) -> Response:
+def handle_state(state_id: "str | None" = None) -> Response:
     """
     Handles GET, DELETE, and PUT requests for a specific state.
 
