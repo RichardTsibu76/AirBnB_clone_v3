@@ -84,11 +84,12 @@ class TestFileStorageDocs(unittest.TestCase):
         """Test for the presence of docstrings in FileStorage methods"""
         for func in self.fs_f:
             self.assertIsNot(
-                func[1].__doc__, None, f"{func[0]} method needs a docstring"
+                func[1].__doc__, None,
+                "{} method needs a docstring".format(func[0])
             )
             self.assertTrue(
                 len(func[1].__doc__) >= 1,
-                f"{func[0]} method needs a docstring",
+                "{} method needs a docstring".format(func[0]),
             )
 
 
