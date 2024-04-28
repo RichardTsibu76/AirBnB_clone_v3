@@ -1,0 +1,5 @@
+#!/usr/bin/bash
+
+# this script runs the flask development server unconditionally for the
+# FileStorage environment
+while true; do HBNB_API_PORT=5001 python3 -m api.v1.app; done
