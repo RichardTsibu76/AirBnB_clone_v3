@@ -1,29 +1,26 @@
 #!/usr/bin/python3
-'''
-Creating a new view for amentiy
-'''
+"""
+Creating a new view for amenity
+"""
 
 from flask import abort, request, jsonify
-from api.v1.views import app_view
+from api.v1.views import app_views
 from models import storage
 from models.amenity import Amenity
 
 
-@app_views.route("/amenities/<amenity_id>/amenities", methods=["GET"])
-def get_amenity(amenity_id):
+@app_views.route("/amenities", methods=["GET"])
+def get_amenities():
     """
-    Retrieve all amenties.
+    Retrieve all amenities.
     """
-
-    state = storage.get(Amenity, amenity_id)
-    if amenity is None:
-        abort(404)
-
-    return jsonify([amenity.to_dict() for amenity in amenities])
+    return jsonify(
+        [amenity.to_dict() for amenity in storage.all(Amenity).values()]
+    )
 
 
-@app_views.route("/amenity/<amenity_id>", methods=["GET"])
-def get_amenity_id(amenity_id):
+@app_views.route("/amenities/<amenity_id>", methods=["GET"])
+def get_amenity_by_id(amenity_id):
     """
     Retrieve a amenity by its ID.
 
@@ -31,7 +28,7 @@ def get_amenity_id(amenity_id):
         amenity_id (str): The ID of the amenity to retrieve.
 
     Returns:
-        dict: A JSON representation of the city.
+        dict: A JSON representation of the amenity.
 
     Raises:
         404: If the amenity with the specified ID does not exist.
@@ -45,8 +42,8 @@ def get_amenity_id(amenity_id):
 
 @app_views.route("/amenities/<amenity_id>", methods=["DELETE"])
 def delete_amenity(amenity_id):
-    '''
-    Delete a amenity based on its ID.
+    """
+    Delete an amenity based on its ID.
 
     Args:
         amenity_id (str): The ID of the amenity to be deleted.
@@ -54,8 +51,7 @@ def delete_amenity(amenity_id):
     Returns:
         tuple: A tuple containing an empty JSON response and a status code of
         200.
-    '''
-
+    """
     obj = storage.get(Amenity, amenity_id)
     if obj is None:
         abort(404)
@@ -64,16 +60,11 @@ def delete_amenity(amenity_id):
     return jsonify({}), 200
 
 
-@app_views.route("/amenities/<amenity_id>/amenities", methods=["POST"])
-def create_amenity(amenity_id):
+@app_views.route("/amenities", methods=["POST"])
+def create_amenity():
     '''
-    create a new amentiy
+    create a new amenity
     '''
-
-    amenity = storage.get(Amenity, amenity_id)
-    if amenity is None:
-        abort(404)
-
     data = request.get_json(force=True, silent=True)
 
     # the data provided must be a dictionary
@@ -83,7 +74,7 @@ def create_amenity(amenity_id):
     if "name" not in data:
         abort(400, "Missing name")
 
-    new_amenity = City(state_id=state.id, **data)
+    new_amenity = Amenity(**data)
     new_amenity.save()
     return jsonify(new_amenity.to_dict()), 201
 
@@ -106,7 +97,7 @@ def update_amenity(amenity_id):
         abort(400, "Missing name")
 
     for key, value in data.items():
-        if key in ['id', 'created_at', 'updated_at', 'state_id']:
+        if key in ['id', 'created_at', 'updated_at']:
             continue
 
         setattr(amenity_obj, key, value)
