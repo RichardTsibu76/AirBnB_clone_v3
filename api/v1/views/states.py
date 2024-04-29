@@ -17,7 +17,7 @@ def handle_states():
         Response: The response object containing the result of the request.
     """
     if request.method == 'POST':
-        data = request.get_json(silent=True)
+        data = request.get_json(force=True, silent=True)
 
         # the data provided must be a dictionary
         if not data or not isinstance(data, dict):
@@ -57,7 +57,7 @@ def handle_state(state_id=None):
         return jsonify({}), 200
 
     if request.method == 'PUT':
-        data = request.get_json(silent=True)
+        data = request.get_json(force=True, silent=True)
 
         # the data provided must be a dictionary
         if not data or not isinstance(data, dict):
