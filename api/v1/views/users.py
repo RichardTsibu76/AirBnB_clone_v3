@@ -1,46 +1,86 @@
 #!/usr/bin/python3
-"""Creating new view for user  objects 
+"""Creating new view for user  objects
 that handles all default RESTFul
 API actions"""
 
+from flask import abort, request, jsonify
 from api.v1.views import app_views
 from models import storage
 from models.user import User
-from flask import abort, request, jsonify
 
 
-@app_views.route("/users",  methods=["GET"])
-@app_views.route("/users/<user_id>", methods=["GET"])
-def user(user_id):
-    """user and it's id"""
-    user_list = []
+@app_views.route("/users")
+@app_views.route("/users/<user_id>")
+def get_users(user_id=None):
+    """
+    Retrieve user(s) information.
+
+    Args:
+        user_id (str): Optional. The ID of the user to retrieve.
+
+    Returns:
+        If user_id is None:
+            A JSON response containing a list of dictionaries, each
+            representing a user.
+        If user_id is provided:
+            A JSON response containing the information of the specified user.
+
+    Raises:
+        404: If the user with the specified user_id is not found.
+    """
     if user_id is None:
-        all_objs = storage.all(User).values()
-        for v in all_objs:
-            user_list.append(v.to_dict())
-        return jsonify(user_list)
-    else:
-        result = storage.get(User, user_id)
-        if result is None:
-            abort(404)
-        return jsonify(result.to_dict())
+        return jsonify(
+            [user.to_dict() for user in storage.all(User).values()]
+        )
+
+    user_obj = storage.get(User, user_id)
+    if user_obj is None:
+        abort(404)
+
+    return jsonify(user_obj.to_dict())
 
 
-@app_views.route("/users/<user_id>", strict_slashes=False,
-                 methods=["DELETE"])
-def user_delete(user_id):
-    """method for the removing obj"""
+@app_views.route("/users/<user_id>", methods=["DELETE"])
+def delete_user(user_id):
+    """
+    Delete a user by user_id.
+
+    Args:
+        user_id (str): The ID of the user to be deleted.
+
+    Returns:
+        tuple: A tuple containing an empty JSON response and a status code of
+        200.
+
+    Raises:
+        404: If the user with the specified user_id is not found.
+    """
     obj = storage.get(User, user_id)
     if obj is None:
         abort(404)
     storage.delete(obj)
-    storage.save()
     return jsonify({}), 200
 
 
-@app_views.route("/users", strict_slashes=False, methods=["POST"])
+@app_views.route("/users", methods=["POST"])
 def create_user():
-    """create a new post req"""
+    """
+    Create a new user.
+
+    This endpoint allows the creation of a new user by providing the required
+    information in the request body as a JSON object. The JSON object should
+    contain the following fields:
+    - email: The email address of the user.
+    - password: The password for the user.
+
+    Returns:
+        A JSON response containing the newly created user's information and
+        a status code of 201 (Created) if the user was successfully created.
+
+    Raises:
+        400 (Bad Request): If the request body is not a valid JSON object or
+        if any of the required fields (email, password) are missing.
+    """
     data = request.get_json(force=True, silent=True)
     if not data:
         abort(400, "Not a JSON")
@@ -48,6 +88,7 @@ def create_user():
         abort(400, "Missing email")
     if "password" not in data:
         abort(400, "Missing password")
+
     new_user = User(**data)
     new_user.save()
     return jsonify(new_user.to_dict()), 201
@@ -55,15 +96,31 @@ def create_user():
 
 @app_views.route("/users/<user_id>", methods=["PUT"])
 def update_user(user_id):
-    """update user"""
-    obj = storage.get(User, user_id)
-    if obj is None:
+    """
+    Update a user with the given user_id.
+
+    Args:
+        user_id (str): The ID of the user to be updated.
+
+    Returns:
+        tuple: A tuple containing the JSON representation of the updated user
+        and the HTTP status code.
+
+    Raises:
+        404: If the user with the given user_id does not exist.
+        400: If the request data is not a valid JSON.
+
+    """
+    user_obj = storage.get(User, user_id)
+    if user_obj is None:
         abort(404)
+
     data = request.get_json(force=True, silent=True)
     if not data:
         abort(400, "Not a JSON")
-    obj.password = data.get("password", obj.password)
-    obj.first_name = data.get("first_name", obj.first_name)
-    obj.last_name = data.get("last_name", obj.last_name)
-    obj.save()
-    return jsonify(obj.to_dict()), 200
+
+    for key, value in data.items():
+        setattr(user_obj, key, value)
+
+    user_obj.save()
+    return jsonify(user_obj.to_dict()), 200
