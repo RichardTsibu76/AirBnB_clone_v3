@@ -19,12 +19,11 @@ def handle_states():
     if request.method == 'POST':
         data = request.get_json(force=True, silent=True)
 
-        # the data provided must be a dictionary
-        if not data or not isinstance(data, dict):
-            return "Not a JSON", 400
+        if not data:
+            abort(400, "Not a JSON")
 
         if "name" not in data:
-            return "Missing name", 400
+            abort(400, "Missing name")
 
         state_obj = State(**data)
         state_obj.save()
@@ -59,12 +58,11 @@ def handle_state(state_id=None):
     if request.method == 'PUT':
         data = request.get_json(force=True, silent=True)
 
-        # the data provided must be a dictionary
-        if not data or not isinstance(data, dict):
-            return "Not a JSON", 400
+        if not data:
+            abort(400, "Not a JSON")
 
         if "name" not in data:
-            return "Missing name", 400
+            abort(400, "Missing name")
 
         for key, value in data.items():
             if key in ['id', 'created_at', 'updated_at']:

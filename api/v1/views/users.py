@@ -120,6 +120,9 @@ def update_user(user_id):
         abort(400, "Not a JSON")
 
     for key, value in data.items():
+        if key in ['id', 'email', 'created_at', 'updated_at']:
+            continue
+
         setattr(user_obj, key, value)
 
     user_obj.save()
