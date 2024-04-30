@@ -67,8 +67,7 @@ def create_amenity():
     '''
     data = request.get_json(force=True, silent=True)
 
-    # the data provided must be a dictionary
-    if not data or not isinstance(data, dict):
+    if not data:
         abort(400, "Not a JSON")
 
     if "name" not in data:
@@ -89,8 +88,7 @@ def update_amenity(amenity_id):
         abort(404)
 
     data = request.get_json(force=True, silent=True)
-    # the data provided must be a dictionary
-    if not data or not isinstance(data, dict):
+    if not data:
         abort(400, "Not a JSON")
 
     if "name" not in data:
