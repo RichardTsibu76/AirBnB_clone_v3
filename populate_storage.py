@@ -171,7 +171,7 @@ def create_dummy_data(number_of_instances):
             place_obj_1 = Place(
                 user_id=user_id,
                 city_id=city_id,
-                name=fake.name(),
+                name=fake.city(),
                 longitude=float(fake.longitude()),
                 latitude=float(fake.latitude()),
                 description=fake.sentence(),
@@ -182,7 +182,7 @@ def create_dummy_data(number_of_instances):
             place_obj_2 = Place(
                 user_id=user_id,
                 city_id=city_id,
-                name=fake.name(),
+                name=fake.city(),
                 longitude=float(fake.longitude()),
                 latitude=float(fake.latitude()),
                 description=fake.sentence(),
