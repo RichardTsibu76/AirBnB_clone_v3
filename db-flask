@@ -2,9 +2,32 @@
 
 # this script runs the flask development server unconditionally for the
 # DBStorage environment
+
+# the script will run the populate_storage script to populate the database
+
+if [ "$#" -ne 1 ]; then
+    echo "Usage: $0 <number_of_instances>"
+    exit 1
+fi
+
+kill_server() {
+    echo -e "\nTerminating the server"
+    kill -9 "$(pgrep -laf "api.v1.app" | cut -f 1 -d ' ')" 2> /dev/null
+}
+
+trap kill_server EXIT
+
+echo "Starting Flask Server"
 while true; do
 HBNB_MYSQL_USER=hbnb_dev HBNB_MYSQL_PWD=hbnb_dev_pwd \
     HBNB_MYSQL_HOST=localhost HBNB_MYSQL_DB=hbnb_dev_db \
     HBNB_TYPE_STORAGE=db HBNB_API_HOST=0.0.0.0 HBNB_API_PORT=5002 \
-    python3 -m api.v1.app
+    python3 -m api.v1.app 2> /dev/null &
+
+    echo "Generating dummy data"
+    HBNB_MYSQL_USER=hbnb_dev HBNB_MYSQL_PWD=hbnb_dev_pwd \
+    HBNB_MYSQL_HOST=localhost HBNB_MYSQL_DB=hbnb_dev_db \
+    HBNB_TYPE_STORAGE=db ./populate_storage.py "$1"
+
+    sleep 300 # generate more dummy data every five minutes
 done
