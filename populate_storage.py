@@ -238,7 +238,7 @@ def create_dummy_data(number_of_instances):
             place_obj.amenities.append(amenity_obj)
             place_obj.save()
             print("\t Added amenity: {} to place: {}".
-                format(amenity_obj.name, place_obj.name))
+                  format(amenity_obj.name, place_obj.name))
             sleep(0.1)
 
 
