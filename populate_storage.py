@@ -13,6 +13,7 @@ from models import storage
 from faker import Faker
 from random import choice
 import sys
+from models.place import place_amenity
 
 all_amenities = [
     "Swimming pool",
@@ -129,6 +130,7 @@ def create_dummy_data(number_of_instances):
     city_ids = []
     user_ids = []
     place_ids = []
+    amenity_ids = []
 
     for _ in range(number_of_instances):
         state_obj = State(name=fake.state())
@@ -220,11 +222,24 @@ def create_dummy_data(number_of_instances):
     for _ in place_ids:
         for _ in range(number_of_instances):
             amenity_obj = Amenity(name=choice(all_amenities))
+            amenity_ids.append(amenity_obj.id)
             amenity_obj.save()
             sleep(0.1)
 
             print("\t Added amenity: {} - {}".
                   format(amenity_obj.name, amenity_obj.id))
+
+    # add amenities to places
+    print("\nAdding amenities to places")
+    for obj in place_ids:
+        place_obj = storage.get(Place, obj)
+        for _ in range(number_of_instances):
+            amenity_obj = storage.get(Amenity, choice(amenity_ids))
+            place_obj.amenities.append(amenity_obj)
+            place_obj.save()
+            print("\t Added amenity: {} to place: {}".
+                format(amenity_obj.name, place_obj.name))
+            sleep(0.1)
 
 
 if __name__ == "__main__":
